@@ -8,16 +8,21 @@
 #ifndef MYFTP_
 #define MYFTP_
 
+#define MAX_CLIENTS 10
 #define SOCKET_ERROR -1
 #define ERROR 84
 #define CORRECT 0
 
-#include <stdbool.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 

@@ -5,12 +5,7 @@
 ** myftp
 */
 
-#include <unistd.h>
-#include <signal.h>
-#include <arpa/inet.h>
 #include "myftp.h"
-
-//nc -C 127.0.0.1 4242
 
 bool is_wrong_parameters(int argc, char **argv)
 {
@@ -52,22 +47,28 @@ int wait_for_client(int server_socket, int port)
 {
     int csock = 0;
     struct sockaddr_in cin;
-    pid_t child_pid = 0;
     socklen_t len_cin = sizeof(cin);
+    int clients_sockets[MAX_CLIENTS];
+    fd_set readfds;
 
     printf("En attente qu'un client se connecte sur le port %d...\n", port);
     while (1) {
-        csock = accept(server_socket, (struct sockaddr*)&cin, &len_cin);
-        if (csock < 0)
+        FD_ZERO(&readfds);
+        FD_SET(server_socket, &readfds);
+        if (select(server_socket + 1 , &readfds , NULL , NULL , NULL) < 0)
             return (SOCKET_ERROR);
-        child_pid = fork();
-        if (child_pid == 0) {
-            printf("Un client se connecte de %s:%d\n\n", inet_ntoa(cin.sin_addr), htons(cin.sin_port));
-            sleep(5);
-            write(csock, "Hello world!!\n", 16);
-            kill(getpid(), SIGKILL);
+        if (FD_ISSET(server_socket, &readfds)) {   
+            csock = accept(server_socket, (struct sockaddr *)&cin, (socklen_t*)&len_cin);
+            printf("Nouvelle connection venant de ip: %s, port: %d\n", inet_ntoa(cin.sin_addr), ntohs(cin.sin_port));
+            write(csock, "Hello World!!\n", 16);
+            for (int i = 0; i < MAX_CLIENTS; i++) {
+                if (clients_sockets[i] == 0) {
+                    clients_sockets[i] = csock;
+                    break;
+                }
+            }
+            close(csock);
         }
-        close(csock);
     }
     close(server_socket);
     return (CORRECT);
