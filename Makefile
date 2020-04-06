@@ -6,13 +6,29 @@
 ##
 
 SRCFOLDER = ./src/
+COMFOLDER = ./src/commands/
 
-SRC =
+SRC =	$(SRCFOLDER)my_str_to_word_array.c	\
+		$(COMFOLDER)cdup.c					\
+		$(COMFOLDER)cwd.c					\
+		$(COMFOLDER)dele.c					\
+		$(COMFOLDER)help.c					\
+		$(COMFOLDER)list.c					\
+		$(COMFOLDER)noop.c					\
+		$(COMFOLDER)pass.c					\
+		$(COMFOLDER)pasv.c					\
+		$(COMFOLDER)port.c					\
+		$(COMFOLDER)pwd.c					\
+		$(COMFOLDER)quit.c					\
+		$(COMFOLDER)retr.c					\
+		$(COMFOLDER)stor.c					\
+		$(COMFOLDER)user.c					\
+
 
 SRCMAIN =	$(SRCFOLDER)main.c
 
 CXX = gcc
-CFLAGS = -W -Wextra -I./include
+CFLAGS = -W -Wextra -I./include -g3
 
 BINARYNAME = myftp
 

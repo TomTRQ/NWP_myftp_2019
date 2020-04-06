@@ -9,10 +9,14 @@
 #define MYFTP_
 
 #define MAX_CLIENTS 10
+#define MAX_BUFFER 256
+#define COMMAND_NUMBER 14
 #define SOCKET_ERROR -1
 #define ERROR 84
 #define CORRECT 0
 
+#include "struct.h"
+#include "prototypes.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

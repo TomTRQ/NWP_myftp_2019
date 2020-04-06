@@ -7,8 +7,45 @@
 
 #include "myftp.h"
 
+#include <dirent.h>
+#include <errno.h>
+
+int my_char_isnum(char c)
+{
+    if (c < 48 || c > 57)
+        return (0);
+    return (1);
+}
+
+int my_check_nbr(char *str)
+{
+    int a = 0;
+
+    if (str[a] == '-')
+        a++;
+    while (str[a] != '\0') {
+        if (my_char_isnum(str[a]) == 0)
+            return (0);
+        a++;
+    }
+    return (1);
+}
+
 bool is_wrong_parameters(int argc, char **argv)
 {
+    DIR* dir = opendir(argv[2]);
+
+    if (argc == 3) {
+        if (ENOENT == errno) {
+            printf("Wrong directory entered\n");
+            return (true);
+        }
+        if (my_check_nbr(argv[1]) == 0) {
+            printf("The first argument is not a positive integer\n");
+            return (true);
+        }
+    }
+    closedir(dir);
     return (false);
 }
 
@@ -26,7 +63,7 @@ bool print_help(int argc, char **argv)
     return (false);
 }
 
-int start_program(char **argv)
+int create_server(char **argv)
 {
     struct sockaddr_in sin;
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -39,35 +76,84 @@ int start_program(char **argv)
     sin.sin_port = htons(atoi(argv[1]));
     if (bind(server_socket, (struct sockaddr*)&sin, len_sin) < 0)
         return (SOCKET_ERROR);
-    listen(server_socket, 10);
+    listen(server_socket, MAX_CLIENTS);
     return (server_socket);
 }
 
-int wait_for_client(int server_socket, int port)
+void send_message(char *message, int dest)
+{
+    int size = strlen(message);
+
+    write(dest, message, size);
+}
+
+char *get_message(int from)
+{
+    char *test = malloc(MAX_BUFFER);
+
+    if (test == NULL)
+        return (NULL);
+    read(from, test, MAX_BUFFER);
+    return (test);
+}
+
+void call_command(char *line, client_t *client)
+{
+    char **array = my_str_to_word_array(line);
+
+    if (array == NULL || array[0] == NULL)
+        return;
+    for (int i = 0; i < COMMAND_NUMBER; i++)
+        if (strcmp(array[0], command_array[i].name) == 0) {
+            command_array[i].func(array[1], client);
+            free(line);
+            return;
+        }
+    free(line);
+    send_message("xxx Wrong command\r\n", client->socket);
+}
+
+void add_client(int csock, client_t *clients[])
+{
+    client_t *new_client = malloc(sizeof(client_t));
+
+    if (new_client == NULL)
+        return;
+    new_client->socket = csock;
+    new_client->directory = ".";
+    new_client->username = NULL;
+    new_client->passwd = false;
+    new_client->is_connected = false;
+    for (int i = 0; i < MAX_CLIENTS; i++)
+        if (clients[i] == NULL) {
+            clients[i] = new_client;
+            return;
+        }
+}
+
+int wait_for_client(int server_socket, int port, char *folder_path)
 {
     int csock = 0;
     struct sockaddr_in cin;
     socklen_t len_cin = sizeof(cin);
-    int clients_sockets[MAX_CLIENTS];
+    client_t **clients = calloc(sizeof(client_t *) * MAX_CLIENTS, MAX_CLIENTS);
     fd_set readfds;
 
-    printf("En attente qu'un client se connecte sur le port %d...\n", port);
+    if (clients == NULL)
+        return (SOCKET_ERROR);
+    printf("Waiting for clients on port %d...\n", port);
     while (1) {
         FD_ZERO(&readfds);
         FD_SET(server_socket, &readfds);
-        if (select(server_socket + 1 , &readfds , NULL , NULL , NULL) < 0)
+        if (select(FD_SETSIZE, &readfds , NULL , NULL , NULL) < 0)
             return (SOCKET_ERROR);
-        if (FD_ISSET(server_socket, &readfds)) {   
-            csock = accept(server_socket, (struct sockaddr *)&cin, (socklen_t*)&len_cin);
-            printf("Nouvelle connection venant de ip: %s, port: %d\n", inet_ntoa(cin.sin_addr), ntohs(cin.sin_port));
-            write(csock, "Hello World!!\n", 16);
-            for (int i = 0; i < MAX_CLIENTS; i++) {
-                if (clients_sockets[i] == 0) {
-                    clients_sockets[i] = csock;
-                    break;
-                }
-            }
-            close(csock);
+        csock = accept(server_socket, (struct sockaddr *)&cin, &len_cin);
+        printf("New connection from ip: %s, port: %d\n", inet_ntoa(cin.sin_addr), ntohs(cin.sin_port));
+        if (FD_ISSET(server_socket, &readfds)) {
+            send_message("220 Connection established\r\n", csock);
+            add_client(csock, clients);
+            while (1)
+                call_command(get_message(csock), clients[0]);
         }
     }
     close(server_socket);
@@ -82,7 +168,7 @@ int main(int argc, char **argv)
         return (ERROR);
     else if (print_help(argc, argv))
         return (CORRECT);
-    server_socket = start_program(argv);
-    if (server_socket == SOCKET_ERROR || wait_for_client(server_socket, atoi(argv[1])) == SOCKET_ERROR)
+    server_socket = create_server(argv);
+    if (server_socket == SOCKET_ERROR || wait_for_client(server_socket, atoi(argv[1]), argv[2]) == SOCKET_ERROR)
         return (ERROR);
 }
