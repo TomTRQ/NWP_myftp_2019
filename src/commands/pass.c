@@ -7,7 +7,7 @@
 
 #include "myftp.h"
 
-void pass(char *client_pass, client_t *client)
+void pass(char *client_pass, client_t *client, server_t server)
 {
     if (!client->is_connected) {
         if (client_pass == NULL)

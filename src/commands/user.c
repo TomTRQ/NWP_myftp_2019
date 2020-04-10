@@ -7,10 +7,10 @@
 
 #include "myftp.h"
 
-void user(char *client_username, client_t *client)
+void user(char *client_username, client_t *client, server_t server)
 {
     if (!client->is_connected) {
-        client->username = client_username;
+        strcpy(client->username, client_username);
         if (client->passwd && client_username && strcmp(client_username, "Anonymous") == 0) {
             client->is_connected = true;
             send_message("230 User logged in, proceed.\r\n", client->socket);

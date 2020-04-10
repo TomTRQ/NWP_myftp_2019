@@ -7,26 +7,25 @@
 
 #include <stdlib.h>
 
-static int is_alphanumeric(char c)
+static int is_cut(char c)
 {
-    if ((c >= '1' && c <= '9') || (c >= 'a' && c <= 'z') || \
-    (c >= 'A' && c <= 'Z'))
+    if (c > 32 && c < 127)
         return (1);
     return (0);
 }
 
 static int	count_words(char const *str)
 {
-    int		word = 0;
-    int		i = 0;
-    int		nb_words = 0;
+    int	word = 0;
+    int	i = 0;
+    int nb_words = 0;
 
     while (str[i] != '\0') {
-        if (word == 0 && is_alphanumeric(str[i]) == 1) {
+        if (word == 0 && is_cut(str[i]) == 1) {
             word = 1;
             nb_words = nb_words + 1;
         }
-        if (word == 1 && is_alphanumeric(str[i]) == 0)
+        if (word == 1 && is_cut(str[i]) == 0)
             word = 0;
         i = i + 1;
     }
@@ -53,10 +52,10 @@ static int save_words(char **tab, char const *str, int nb_words)
     int	actual = 0;
 
     while (actual < nb_words) {
-        while (str[i] && is_alphanumeric(str[i]) == 0)
+        while (str[i] && is_cut(str[i]) == 0)
             i = i + 1;
         begin = i;
-        while (str[i] && is_alphanumeric(str[i]) == 1)
+        while (str[i] && is_cut(str[i]) == 1)
             i = i + 1;
         tab[actual] = malloc(sizeof(char) * ((i - 1) - begin + 2));
         if (tab[actual] == NULL)
@@ -70,9 +69,10 @@ static int save_words(char **tab, char const *str, int nb_words)
 
 char **my_str_to_word_array(char const *str)
 {
-    int	nb_words = count_words(str);
+    int	nb_words = 0;
     char **tab = NULL;
 
+    nb_words = count_words(str);
     tab = malloc(sizeof(char *) * (nb_words + 1));
     if (tab == NULL)
         return (NULL);

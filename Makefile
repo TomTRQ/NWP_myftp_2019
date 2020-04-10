@@ -7,28 +7,36 @@
 
 SRCFOLDER = ./src/
 COMFOLDER = ./src/commands/
+UTILFOLDER = ./src/utils/
 
-SRC =	$(SRCFOLDER)my_str_to_word_array.c	\
-		$(COMFOLDER)cdup.c					\
-		$(COMFOLDER)cwd.c					\
-		$(COMFOLDER)dele.c					\
-		$(COMFOLDER)help.c					\
-		$(COMFOLDER)list.c					\
-		$(COMFOLDER)noop.c					\
-		$(COMFOLDER)pass.c					\
-		$(COMFOLDER)pasv.c					\
-		$(COMFOLDER)port.c					\
-		$(COMFOLDER)pwd.c					\
-		$(COMFOLDER)quit.c					\
-		$(COMFOLDER)retr.c					\
-		$(COMFOLDER)stor.c					\
-		$(COMFOLDER)user.c					\
+SRC =	$(SRCFOLDER)new_client.c						\
+		$(SRCFOLDER)print_help.c						\
+		$(SRCFOLDER)server_loop.c						\
+		$(SRCFOLDER)get_message.c						\
+		$(SRCFOLDER)send_message.c						\
+		$(SRCFOLDER)create_server.c						\
+		$(UTILFOLDER)my_str_to_word_array.c				\
+		$(UTILFOLDER)get_actual_relative_directory.c	\
+		$(COMFOLDER)cdup.c								\
+		$(COMFOLDER)cwd.c								\
+		$(COMFOLDER)dele.c								\
+		$(COMFOLDER)help.c								\
+		$(COMFOLDER)list.c								\
+		$(COMFOLDER)noop.c								\
+		$(COMFOLDER)pass.c								\
+		$(COMFOLDER)pasv.c								\
+		$(COMFOLDER)port.c								\
+		$(COMFOLDER)pwd.c								\
+		$(COMFOLDER)quit.c								\
+		$(COMFOLDER)retr.c								\
+		$(COMFOLDER)stor.c								\
+		$(COMFOLDER)user.c								\
 
 
 SRCMAIN =	$(SRCFOLDER)main.c
 
 CXX = gcc
-CFLAGS = -W -Wextra -I./include -g3
+CFLAGS = -W -Wextra -I./include
 
 BINARYNAME = myftp
 

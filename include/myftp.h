@@ -10,6 +10,7 @@
 
 #define MAX_CLIENTS 10
 #define MAX_BUFFER 256
+#define MAX_FOLDER_SIZE 4096
 #define COMMAND_NUMBER 14
 #define SOCKET_ERROR -1
 #define ERROR 84
@@ -22,7 +23,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
-#include <stdbool.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>

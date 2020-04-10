@@ -7,7 +7,20 @@
 
 #include "myftp.h"
 
-void pwd(char *command, client_t *client)
+void pwd(char *parameter, client_t *client, server_t server)
 {
-    send_message(command_array[6].message, client->socket);
+    char *folder = malloc(4096);
+
+    if (parameter) {
+        send_message("xxx PWD command does not take a parameter\r\n", client->socket);
+        return;
+    }
+    if (!folder) {
+        send_message("xxx An error occured while executing the command\r\n", client->socket);
+        return;
+    }
+    strcpy(folder, client->directory);
+    strcat(folder, "\r\n");
+    send_message(folder, client->socket);
+    free(folder);
 }
