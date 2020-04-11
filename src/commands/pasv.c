@@ -7,15 +7,18 @@
 
 #include "myftp.h"
 
-char *string_to_send()
+char *string_to_send(client_t *client)
 {
     char *to_send = calloc(39, 39);
 
     if (!to_send)
         return ("xxx An error occured with the PASV command\r\n");
-    strcpy(to_send, "227 Entering Passive Mode (127,0,0,1, ");
-
+    strcpy(to_send, "227 Entering Passive Mode (127,0,0,1,");
+    //strcpy(to_send, port1);
+    //strcpy(to_send, port2);
     strcpy(to_send, ")\r\n");
+    client->is_passive = true;
+    return (to_send);
 }
 
 void pasv(char *first_argument, client_t *client, server_t server)
@@ -33,6 +36,6 @@ void pasv(char *first_argument, client_t *client, server_t server)
     sin.sin_port = htons(8888);
     if (bind(data_socket, (struct sockaddr*)&sin, len_sin) < 0)
         return send_message("xxx Error with binding the data socket", client->socket);
-    client->is_passive = true;
-    send_message(string_to_send(), client->socket);
+    send_message(string_to_send(client), client->socket);
+    client->data_socket = data_socket;
 }

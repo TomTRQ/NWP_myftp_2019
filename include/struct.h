@@ -13,6 +13,7 @@
 typedef struct client_s
 {
 	int socket;
+	int data_socket;
 	char *directory;
 	char *username;
 	int port;

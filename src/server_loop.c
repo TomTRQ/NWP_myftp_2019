@@ -26,7 +26,6 @@ void call_command(char *line, client_t *client, server_t server)
     if (command == NULL || command[0] == NULL)
         return;
     chdir(client->directory);
-    printf("COMMAND: %s\n", command[0]);
     for (int i = 0; i < COMMAND_NUMBER; i++)
         if (strcmp(command[0], command_array[i].name) == 0) {
             command_array[i].func(command[1], client, server);
