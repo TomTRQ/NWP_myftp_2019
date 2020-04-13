@@ -10,7 +10,7 @@
 void quit(char *first_argument, client_t *client, server_t server)
 {
     if (first_argument)
-        return send_message("xxx QUIT command has no parameter\r\n", client->socket);
+        return send_message("501 QUIT command has no parameter\r\n", client->socket);
     send_message(command_array[4].message, client->socket);
     close(client->socket);
     printf("Disconnection from port %d\n", client->port);

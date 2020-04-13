@@ -20,5 +20,5 @@ void pass(char *client_pass, client_t *client, server_t server)
         } else
             send_message(command_array[1].message, client->socket);
     } else
-        send_message("xxx User already connected\r\n", client->socket);
+        send_message("500 User already connected\r\n", client->socket);
 }

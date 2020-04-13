@@ -17,7 +17,7 @@ void help(char *command, client_t *client, server_t server)
                 send_message(help_array[i], client->socket);
                 return;
             }
-        send_message("xxx Invalid HELP parameter\r\n", client->socket);
+        send_message("501 Invalid HELP parameter\r\n", client->socket);
     }
 }
 

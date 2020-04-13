@@ -32,7 +32,7 @@ void call_command(char *line, client_t *client, server_t server)
             return reset_after_command(temp_remoteness, command, line);
         }
     reset_after_command(temp_remoteness, command, line);
-    send_message("xxx Wrong command\r\n", client->socket);
+    send_message("500 Wrong command\r\n", client->socket);
 }
 
 client_t *remove_client(client_t *client)
