@@ -18,32 +18,8 @@ void reset_after_command(int root_remoteness, char **array, char *line)
     free(array);
 }
 
-void call_command(char *line, client_t *client, server_t server)
-{
-    char **command = my_str_to_word_array(line);
-    int temp_remoteness = client->root_remoteness;
-
-    if (command == NULL || command[0] == NULL)
-        return;
-    chdir(client->directory);
-    for (int i = 0; i < COMMAND_NUMBER; i++)
-        if (strcmp(command[0], command_array[i].name) == 0) {
-            command_array[i].func(command[1], client, server);
-            return reset_after_command(temp_remoteness, command, line);
-        }
-    reset_after_command(temp_remoteness, command, line);
-    send_message("500 Wrong command\r\n", client->socket);
-}
-
-client_t *remove_client(client_t *client)
-{
-    free(client->username);
-    free(client->directory);
-    free(client);
-    return (NULL);
-}
-
-void update_server(int server_socket, client_t **clients, fd_set *readfds, fd_set *writefds)
+void update_server(int server_socket, client_t **clients, \
+fd_set *readfds, fd_set *writefds)
 {
     FD_ZERO(readfds);
     FD_ZERO(writefds);
@@ -57,6 +33,31 @@ void update_server(int server_socket, client_t **clients, fd_set *readfds, fd_se
             FD_SET(clients[i]->socket, readfds);
             FD_SET(clients[i]->socket, writefds);
         }
+}
+
+void call_command(char *line, client_t *client, server_t server)
+{
+    char **command = my_str_to_word_array(line);
+    int temp_remoteness = client->root_remoteness;
+
+    if (command == NULL || command[0] == NULL)
+        return;
+    chdir(client->directory);
+    for (int i = 0; i < COMMAND_NUMBER; i++)
+        if (strcmp(command[0], command_array[i].name) == 0) {
+            command_array[i].func(command[1], client, server);
+            return (reset_after_command(temp_remoteness, command, line));
+        }
+    reset_after_command(temp_remoteness, command, line);
+    send_message("500 Wrong command\r\n", client->socket);
+}
+
+void check_client_to_execute(client_t **clients, \
+server_t server, fd_set readfds)
+{
+    for (int i = 0; i < MAX_CLIENTS; i++)
+        if (clients[i] && FD_ISSET(clients[i]->socket, &readfds))
+            call_command(get_message(clients[i]->socket), clients[i], server);
 }
 
 int server_loop(int server_socket, int port, char *folder_path)
@@ -76,13 +77,9 @@ int server_loop(int server_socket, int port, char *folder_path)
         update_server(server_socket, clients, &readfds, &writefds);
         if (select(fd_max, &readfds, &writefds, NULL , NULL) < 0)
             return (SOCKET_ERROR);
-        if (FD_ISSET(server_socket, &readfds)) {
-            new_client(clients, server_socket, folder_path);
-            fd_max += 1;
-        }
-        for (int i = 0; i < MAX_CLIENTS; i++)
-            if (clients[i] && FD_ISSET(clients[i]->socket, &readfds))
-                call_command(get_message(clients[i]->socket), clients[i], server);
+        if (FD_ISSET(server_socket, &readfds))
+            new_client(clients, server_socket, folder_path, &fd_max);
+        check_client_to_execute(clients, server, readfds);
     }
     return (CORRECT);
 }

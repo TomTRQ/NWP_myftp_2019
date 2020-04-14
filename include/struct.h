@@ -12,31 +12,31 @@
 
 typedef struct client_s
 {
-	int socket;
-	int data_socket;
-	int data_port;
-	char *directory;
-	char *username;
-	int port;
-	int root_remoteness;
-	bool passwd;
-	bool is_connected;
-	bool is_set;
-	bool is_passive;
+    int socket;
+    int data_socket;
+    int data_port;
+    char *directory;
+    char *username;
+    int port;
+    int root_remoteness;
+    bool passwd;
+    bool is_connected;
+    bool is_set;
+    bool is_passive;
 } client_t;
 
 typedef struct server_s
 {
-	int port;
-	char *directory;
+    int port;
+    char *directory;
 } server_t;
 
 typedef struct command_s
 {
-	char *name;
-	char *message;
-	void (*func)(char *, client_t *, server_t);
-	int reply_code;
+    char *name;
+    char *message;
+    void (*func)(char *, client_t *, server_t);
+    int reply_code;
 } command_t;
 
 #endif /* !STRUCT_ */

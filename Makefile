@@ -10,6 +10,7 @@ COMFOLDER = ./src/commands/
 UTILFOLDER = ./src/utils/
 
 SRC =	$(SRCFOLDER)new_client.c						\
+		$(SRCFOLDER)remove_client.c						\
 		$(SRCFOLDER)print_help.c						\
 		$(SRCFOLDER)server_loop.c						\
 		$(SRCFOLDER)get_message.c						\

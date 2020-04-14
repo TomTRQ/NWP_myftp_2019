@@ -14,7 +14,8 @@ void pass(char *client_pass, client_t *client, server_t server)
             client->passwd = true;
         else
             client->passwd = false;
-        if (client->passwd && client->username && strcmp(client->username, "Anonymous") == 0) {
+        if (client->passwd && client->username && \
+        strcmp(client->username, "Anonymous") == 0) {
             client->is_connected = true;
             send_message("230 User logged in, proceed.\r\n", client->socket);
         } else
