@@ -11,7 +11,7 @@ void user(char *client_username, client_t *client, server_t server)
 {
     if (!client_username)
         return send_message("501 Need an username as \
-        parameter\r\n", client->socket);
+parameter\r\n", client->socket);
     if (!client->is_connected) {
         strcpy(client->username, client_username);
         if (client->passwd && strcmp(client_username, "Anonymous") == 0) {
