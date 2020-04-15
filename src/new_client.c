@@ -15,6 +15,7 @@ client_t *new_elem_struct(int csock, char *folder_path, struct sockaddr_in cin)
         return (NULL);
     new_client->socket = csock;
     new_client->root_remoteness = 0;
+    new_client->previous_command = NULL;
     new_client->directory = calloc(MAX_FOLDER_SIZE, MAX_FOLDER_SIZE);
     new_client->username = calloc(MAX_BUFFER, MAX_BUFFER);
     if (new_client->username == NULL || new_client->directory == NULL)

@@ -20,8 +20,11 @@ void send_message(char *message, int dest);
 char **my_str_to_word_array(char const *str);
 int server_loop(int server_socket, int port, char *folder_path);
 char *get_actual_relative_directory(char *full_path, char *root);
+char **concatenate_commands(char *previous_command, char *actual_command);
 void new_client(client_t *clients[], int server_socket, \
 char *folder_path, int *fd_max);
+void reset_after_command(int root_remoteness, char **array, \
+char *line, client_t *client);
 
 void cdup(char *, client_t *, server_t);
 void cwd(char *, client_t *, server_t);
@@ -49,14 +52,14 @@ static command_t command_array[] = {
     {"PASV", "227 Entering Passive Mode (h1,h2,h3,h4,p1,p2).\r\n", &pasv, 227},
     {"PORT", "200 Command okay.\r\n", &port, 200},
     {"HELP", "214 Help message. HELP may take an argument to \
-    print informations about commands\r\n", &help, 214},
+print informations about commands\r\n", &help, 214},
     {"NOOP", "200 Command okay.\r\n", &noop, 200},
     {"RETR", "150 File status okay; \
-    about to open data connection.\r\n", &retr, 150},
+about to open data connection.\r\n", &retr, 150},
     {"STOR", "150 File status okay; \
-    about to open data connection.\r\n", &stor, 150},
+about to open data connection.\r\n", &stor, 150},
     {"LIST", "150 File status okay; \
-    about to open data connection.\r\n", &list, 150}
+about to open data connection.\r\n", &list, 150}
 };
 
 static char *help_array[] = {

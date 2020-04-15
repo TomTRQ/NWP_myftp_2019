@@ -16,9 +16,11 @@ void print_files_in_folder(char *folder, client_t *client)
     directory = opendir(folder);
 
     if (directory) {
+        send_message(command_array[13].message, client->socket);
         dir = readdir(directory);
         while (dir != NULL) {
-            printf("%s\n", dir->d_name);
+            send_message(dir->d_name, client->socket);
+            send_message("\n", client->socket);
             dir = readdir(directory);
         }
         closedir(directory);
@@ -37,5 +39,4 @@ files\r\n", client->socket));
         return (print_files_in_folder(path, client));
     if (!path)
         return (print_files_in_folder(".", client));
-    send_message(command_array[13].message, client->socket);
 }

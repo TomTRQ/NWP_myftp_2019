@@ -7,17 +7,6 @@
 
 #include "myftp.h"
 
-void reset_after_command(int root_remoteness, char **array, char *line)
-{
-    for (int i = 0; i < root_remoteness; i++)
-        chdir("../");
-    free(line);
-    if (array[1])
-        free(array[1]);
-    free(array[0]);
-    free(array);
-}
-
 void update_server(int server_socket, client_t **clients, \
 fd_set *readfds, fd_set *writefds)
 {
@@ -35,20 +24,36 @@ fd_set *readfds, fd_set *writefds)
         }
 }
 
+bool command_found(char **command, client_t *client, server_t server)
+{
+    if (!command || !command[0])
+        return (false);
+    for (int i = 0; i < COMMAND_NUMBER; i++)
+        if (strcmp(command[0], command_array[i].name) == 0) {
+            command_array[i].func(command[1], client, server);
+            return (true);
+        }
+    return (false);
+}
+
 void call_command(char *line, client_t *client, server_t server)
 {
     char **command = my_str_to_word_array(line);
+    char **previous_command_tab = NULL;
     int temp_remoteness = client->root_remoteness;
 
     if (command == NULL || command[0] == NULL)
         return;
+    if (client->previous_command)
+        previous_command_tab = concatenate_commands\
+        (client->previous_command, line);
     chdir(client->directory);
-    for (int i = 0; i < COMMAND_NUMBER; i++)
-        if (strcmp(command[0], command_array[i].name) == 0) {
-            command_array[i].func(command[1], client, server);
-            return (reset_after_command(temp_remoteness, command, line));
-        }
-    reset_after_command(temp_remoteness, command, line);
+    if (command_found(command, client, server))
+        return (reset_after_command(temp_remoteness, command, line, client));
+    else if (command_found(previous_command_tab, client, server))
+        return (reset_after_command(temp_remoteness, command, line, client));
+    reset_after_command(temp_remoteness, command, line, client);
+    client->previous_command = line;
     send_message("500 Wrong command\r\n", client->socket);
 }
 

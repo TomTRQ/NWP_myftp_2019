@@ -17,6 +17,7 @@ typedef struct client_s
     int data_port;
     char *directory;
     char *username;
+    char *previous_command;
     int port;
     int root_remoteness;
     bool passwd;
