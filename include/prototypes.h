@@ -20,7 +20,6 @@ void send_message(char *message, int dest);
 char **my_str_to_word_array(char const *str);
 int server_loop(int server_socket, int port, char *folder_path);
 char *get_actual_relative_directory(char *full_path, char *root);
-char **concatenate_commands(char *previous_command, char *actual_command);
 void new_client(client_t *clients[], int server_socket, \
 char *folder_path, int *fd_max);
 void reset_after_command(int root_remoteness, char **array, \

@@ -43,22 +43,33 @@ the data socket\r\n", client->socket);
     return (false);
 }
 
-void pasv(char *first_argument, client_t *client, server_t server)
+void find_port_to_bind(int data_socket, int *first_port, int *second_port)
 {
-    int first_port = rand() % 255;
-    int second_port = rand() % 255;
     struct sockaddr_in sin;
-    int data_socket = socket(AF_INET, SOCK_STREAM, 0);
     socklen_t len_sin = sizeof(sin);
 
-    if (is_pasv_error(client, first_argument, data_socket))
-        return;
+    if (*second_port < 255)
+        *second_port += 1;
+    else if (*first_port < 255)
+        *first_port += 1;
     sin.sin_addr.s_addr = htonl(INADDR_ANY);
     sin.sin_family = AF_INET;
-    sin.sin_port = htons(first_port * 256 + second_port);
+    sin.sin_port = htons(*first_port * 256 + *second_port);
     if (bind(data_socket, (struct sockaddr*)&sin, len_sin) < 0)
-        return send_message("500 Error with binding the data \
-socket\r\n", client->socket);
+        find_port_to_bind(data_socket, first_port, second_port);
+}
+
+void pasv(char *first_argument, client_t *client, server_t server)
+{
+    int data_socket = socket(AF_INET, SOCK_STREAM, 0);
+    int first_port = 5;
+    int second_port = 4;
+
+    if (data_socket < 0)
+        return (send_message("500 Error with PASV\r\n", client->socket));
+    if (is_pasv_error(client, first_argument, data_socket))
+        return;
+    find_port_to_bind(data_socket, &first_port, &second_port);
     send_message(string_to_send(first_port, second_port), client->socket);
     client->data_port = first_port * 256 + second_port;
     client->is_passive = true;

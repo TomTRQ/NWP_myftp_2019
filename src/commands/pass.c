@@ -19,7 +19,7 @@ void pass(char *client_pass, client_t *client, server_t server)
             client->is_connected = true;
             send_message("230 User logged in, proceed.\r\n", client->socket);
         } else
-            send_message(command_array[1].message, client->socket);
+            send_message("530 Invalid identifiers\r\n", client->socket);
     } else
         send_message("500 User already connected\r\n", client->socket);
 }

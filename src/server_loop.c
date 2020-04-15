@@ -39,21 +39,14 @@ bool command_found(char **command, client_t *client, server_t server)
 void call_command(char *line, client_t *client, server_t server)
 {
     char **command = my_str_to_word_array(line);
-    char **previous_command_tab = NULL;
     int temp_remoteness = client->root_remoteness;
 
     if (command == NULL || command[0] == NULL)
         return;
-    if (client->previous_command)
-        previous_command_tab = concatenate_commands\
-        (client->previous_command, line);
     chdir(client->directory);
     if (command_found(command, client, server))
         return (reset_after_command(temp_remoteness, command, line, client));
-    else if (command_found(previous_command_tab, client, server))
-        return (reset_after_command(temp_remoteness, command, line, client));
     reset_after_command(temp_remoteness, command, line, client);
-    client->previous_command = line;
     send_message("500 Wrong command\r\n", client->socket);
 }
 

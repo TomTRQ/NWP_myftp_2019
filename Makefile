@@ -17,7 +17,6 @@ SRC =	$(SRCFOLDER)new_client.c						\
 		$(SRCFOLDER)send_message.c						\
 		$(SRCFOLDER)create_server.c						\
 		$(SRCFOLDER)reset_after_command.c				\
-		$(SRCFOLDER)concatenate_commands.c				\
 		$(UTILFOLDER)my_check_nbr.c						\
 		$(UTILFOLDER)my_str_to_word_array.c				\
 		$(UTILFOLDER)get_actual_relative_directory.c	\
