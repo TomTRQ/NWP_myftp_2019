@@ -9,23 +9,29 @@
 #include <dirent.h>
 #include <errno.h>
 
+void message_loop(FILE *fp, int csock)
+{
+    char file[4096];
+
+    while (fgets(file, 4096, fp) != NULL)
+        send_message(file, csock);
+}
+
 void print_files_in_folder(char *command, char *path, client_t *client)
 {
     DIR *directory = opendir(path);
     FILE *fp;
-    char file[4096];
     struct sockaddr_in cin;
     socklen_t len_cin = sizeof(cin);
-    int csock = accept(client->data_socket, (struct sockaddr *)&cin, &len_cin);;
+    int csock = accept(client->data_socket, (struct sockaddr *)&cin, &len_cin);
 
-    send_message("SALUUT\n", csock);
     if (directory) {
         closedir(directory);
         send_message(command_array[13].message, client->socket);
         fp = popen(command, "r");
-        while (fgets(file, 4096, fp) != NULL)
-            printf("%s", file);
+        message_loop(fp, csock);
         send_message("226 Closing data connection\r\n", client->socket);
+        close(csock);
     } else
         send_message("550 The directory can't be found\r\n", client->socket);
 }

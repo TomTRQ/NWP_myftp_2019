@@ -52,6 +52,8 @@ void find_port_to_bind(int data_socket, int *first_port, int *second_port)
         *second_port += 1;
     else if (*first_port < 255)
         *first_port += 1;
+    else
+        return;
     sin.sin_addr.s_addr = htonl(INADDR_ANY);
     sin.sin_family = AF_INET;
     sin.sin_port = htons(*first_port * 256 + *second_port);
@@ -70,6 +72,7 @@ void pasv(char *first_argument, client_t *client, server_t server)
     if (is_pasv_error(client, first_argument, data_socket))
         return;
     find_port_to_bind(data_socket, &first_port, &second_port);
+    listen(data_socket, 1);
     send_message(string_to_send(first_port, second_port), client->socket);
     client->data_port = first_port * 256 + second_port;
     client->is_passive = true;

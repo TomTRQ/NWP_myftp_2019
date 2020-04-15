@@ -14,6 +14,7 @@ void quit(char *first_argument, client_t *client, server_t server)
 parameter\r\n", client->socket);
     send_message(command_array[4].message, client->socket);
     close(client->socket);
+    close(client->data_socket);
     printf("Disconnection from port %d\n", client->port);
     client->is_set = false;
 }
