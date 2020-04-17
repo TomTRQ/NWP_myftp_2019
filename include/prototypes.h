@@ -51,7 +51,7 @@ static command_t command_array[] = {
     {"DELE", "250 Requested file action okay, completed.\r\n", &dele, 250},
     {"PWD", "257 Actual directory: \"DIRECTORY\".\r\n", &pwd, 257},
     {"PASV", "227 Entering Passive Mode (h1,h2,h3,h4,p1,p2).\r\n", &pasv, 227},
-    {"PORT", "200 Command okay.\r\n", &port, 200},
+    {"PORT", "200 Switched to active mode.\r\n", &port, 200},
     {"HELP", "214 Help message. HELP may take an argument to \
 print informations about commands\r\n", &help, 214},
     {"NOOP", "200 Command okay.\r\n", &noop, 200},
