@@ -16,6 +16,7 @@ int my_check_nbr(char *str);
 int create_server(char **argv);
 void message_loop(FILE *fp, int csock);
 bool print_help(int argc, char **argv);
+char *get_word(char *str, char c, int nb);
 client_t *remove_client(client_t *client);
 void send_message(char *message, int dest);
 void send_message(char *message, int dest);
