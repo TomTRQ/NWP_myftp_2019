@@ -7,6 +7,19 @@
 
 #include "myftp.h"
 
+int get_port(char *port)
+{
+    int formula = 0;
+    int first_value = atoi(get_word(port, ',', 5));
+    char *second_value_str = get_word(port, ',', 6);
+    int second_value = 0;
+
+    second_value_str[strlen(second_value_str) - 1] = '\0';
+    second_value = atoi(second_value_str);
+    formula = first_value * 256 + second_value;
+    return (formula);
+}
+
 bool generate_new_socket(char *port, client_t *client)
 {
     struct sockaddr_in sin;
@@ -19,7 +32,7 @@ bool generate_new_socket(char *port, client_t *client)
     }
     sin.sin_addr.s_addr = htonl(INADDR_ANY);
     sin.sin_family = AF_INET;
-    sin.sin_port = htons(atoi(port));
+    sin.sin_port = htons(get_port(port));
     if (bind(data_socket, (struct sockaddr*)&sin, len_sin) < 0) {
         send_message("500 Error with PORT\r\n", client->socket);
         return (false);
@@ -34,7 +47,7 @@ void port(char *port, client_t *client, server_t server)
 {
     if (!client->is_connected)
         return (send_message("530 Need connection\r\n", client->socket));
-    if (!port || my_check_nbr(port) == 0)
+    if (!port)
         return (send_message("501 PORT command needs a valid \
 port as parameter.\r\n", client->socket));
     if (!generate_new_socket(port, client))
