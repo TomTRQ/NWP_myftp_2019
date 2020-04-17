@@ -19,7 +19,6 @@ SRC =	$(SRCFOLDER)new_client.c						\
 		$(SRCFOLDER)reset_after_command.c				\
 		$(UTILFOLDER)my_check_nbr.c						\
 		$(UTILFOLDER)my_str_to_word_array.c				\
-		$(UTILFOLDER)get_actual_relative_directory.c	\
 		$(COMFOLDER)cdup.c								\
 		$(COMFOLDER)cwd.c								\
 		$(COMFOLDER)dele.c								\
