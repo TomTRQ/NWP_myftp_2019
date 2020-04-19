@@ -11,11 +11,8 @@ int get_port(char *port)
 {
     int formula = 0;
     int first_value = atoi(get_word(port, ',', 5));
-    char *second_value_str = get_word(port, ',', 6);
-    int second_value = 0;
+    int second_value = atoi(get_word(port, ',', 6));
 
-    second_value_str[strlen(second_value_str) - 1] = '\0';
-    second_value = atoi(second_value_str);
     formula = first_value * 256 + second_value;
     return (formula);
 }
